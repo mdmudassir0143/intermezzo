@@ -20,6 +20,8 @@ import { AccountAssetsDto } from './account-assets.dto';
 import { AssetClawbackRequestDto } from './asset-clawback-request.dto';
 import { AlgoTransferRequestDto } from './algo-transfer-request.dto';
 import { AlgoTransferResponseDto } from './algo-transfer-response.dto';
+import { AppCallRequestDto } from './app-call-request.dto';
+import { AppCallResponseDto } from './app-call-response.dto';
 
 @ApiBearerAuth()
 @Controller()
@@ -235,5 +237,31 @@ export class Wallet {
         assetClawbackRequestDto.note,
       ),
     } as AssetTransferResponseDto;
+  }
+
+  // App Call
+  @Post('wallet/transactions/create-app/')
+  @ApiOperation({
+    summary: 'Create App',
+    description:
+      'Create an **Algorand** `App`.',
+  })
+  @ApiCreatedResponse({
+    description: 'The app has been successfully created.',
+    type: AppCallResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Not Found',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad Request',
+  })
+  async createAppTx(
+    @Request() request: any,
+    @Body() appCallRequestDto: AppCallRequestDto,
+  ): Promise<AppCallResponseDto> {
+
+    
+    throw new Error('createAppTx not implemented');
   }
 }
