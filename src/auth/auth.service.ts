@@ -29,7 +29,7 @@ export class AuthService {
   async signIn(vault_token: string): Promise<SignInResponseDto> {
     await this.vaultService.checkToken(vault_token);
 
-    let payload = { vault_token: vault_token };
+    const payload = { vault_token: vault_token };
     const response = { access_token: await this.jwtService.signAsync(payload) };
 
     return response as SignInResponseDto;

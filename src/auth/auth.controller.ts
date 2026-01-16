@@ -20,7 +20,7 @@ export class Auth {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async signIn(@Body() signInParams: SignInRequestDto) {
-    let signInResponse: SignInResponseDto = await this.authService.signIn(signInParams.vault_token);
+    const signInResponse: SignInResponseDto = await this.authService.signIn(signInParams.vault_token);
 
     return signInResponse;
   }

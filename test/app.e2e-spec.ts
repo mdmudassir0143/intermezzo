@@ -74,7 +74,7 @@ describe('App E2E', () => {
 
   // Function to get account detail
   const getAccountDetail = async (address: string) => {
-    let chainService = new ChainService(new ConfigService(), new HttpService());
+    const chainService = new ChainService(new ConfigService(), new HttpService());
     return await chainService.getAccountDetail(address);
   };
 
@@ -214,9 +214,9 @@ describe('App E2E', () => {
       expect(create_user_response.status).toBe(201);
 
       // can not use `config` on users key
-      let vaultKeys = [userVaultToken, managerVaultToken];
+      const vaultKeys = [userVaultToken, managerVaultToken];
 
-      for (let vaultKey of vaultKeys) {
+      for (const vaultKey of vaultKeys) {
         // can not config user
         await expect(
           axios.post(

@@ -232,12 +232,12 @@ export class WalletService {
     const managerPublicKey: Buffer = await this.vaultService.getManagerPublicKey(vault_token);
     const managerPublicAddress: string = new AlgorandEncoder().encodeAddress(managerPublicKey);
 
-    let suggested_params = await this.chainService.getSuggestedParams();
+    const suggested_params = await this.chainService.getSuggestedParams();
 
     // check if user opted in for the asset
 
     let willOptInTx: boolean = false;
-    let account_asset = await this.chainService.getAccountAsset(userPublicAddress, assetId);
+    const account_asset = await this.chainService.getAccountAsset(userPublicAddress, assetId);
     if (account_asset == null) {
       willOptInTx = true;
     }
@@ -260,7 +260,7 @@ export class WalletService {
 
     // build unsigned txs
 
-    let unSignedTxs: Uint8Array[] = [];
+    const unSignedTxs: Uint8Array[] = [];
     if (willPaymentTx) {
       unSignedTxs.push(
         await this.chainService.craftPaymentTx(
@@ -298,16 +298,16 @@ export class WalletService {
 
     // group them
 
-    let unSignedGroupedTxns: Uint8Array<ArrayBufferLike>[] = this.chainService.setGroupID(unSignedTxs);
+    const unSignedGroupedTxns: Uint8Array<ArrayBufferLike>[] = this.chainService.setGroupID(unSignedTxs);
 
     // sign txs by sender
 
-    let signedTxs: Uint8Array[] = [];
-    for (let tx of unSignedGroupedTxns) {
-      let encoder: AlgorandEncoder = new AlgorandEncoder();
-      let isUserTx: boolean =
+    const signedTxs: Uint8Array[] = [];
+    for (const tx of unSignedGroupedTxns) {
+      const encoder: AlgorandEncoder = new AlgorandEncoder();
+      const isUserTx: boolean =
         encoder.encodeAddress(Buffer.from(encoder.decodeTransaction(tx).snd)) == userPublicAddress;
-      let isManagerTx: boolean =
+      const isManagerTx: boolean =
         encoder.encodeAddress(Buffer.from(encoder.decodeTransaction(tx).snd)) == managerPublicAddress;
 
       if (isUserTx) {

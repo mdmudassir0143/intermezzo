@@ -363,7 +363,7 @@ describe('ChainService', () => {
 
   describe('waitConfirmation()', () => {
     it('wait for confirmation', async () => {
-      let suggested_params_response = {
+      const suggested_params_response = {
         data: {
           'min-fee': 1000,
           'last-round': 1,
@@ -371,7 +371,7 @@ describe('ChainService', () => {
         status: 200,
       };
 
-      let pending_info_waiting_response = {
+      const pending_info_waiting_response = {
         data: {
           'pool-error': '',
           txn: {
@@ -389,7 +389,7 @@ describe('ChainService', () => {
         },
       };
 
-      let pending_info_confirmed_response = {
+      const pending_info_confirmed_response = {
         data: {
           'asset-index': 735204972,
           'confirmed-round': 49353526,
@@ -409,7 +409,7 @@ describe('ChainService', () => {
         },
       };
 
-      let wait_for_block_after_response = {
+      const wait_for_block_after_response = {
         data: {},
       };
 
