@@ -75,9 +75,8 @@ describe('VaultService', () => {
           headers: { 'Content-Type': 'application/json' },
         },
       );
-    })
-
-  })
+    });
+  });
 
   describe('checkToken', () => {
     it('should return true when token is valid', async () => {
@@ -199,7 +198,7 @@ describe('VaultService', () => {
       const result: Buffer = await vaultService.getUserPublicKey('user-key', 'valid-token');
 
       expect(httpService.axiosRef.get).toHaveBeenCalledWith(`${baseUrl}/v1/${transitPath}/keys/user-key`, {
-        headers: { 
+        headers: {
           'X-Vault-Token': 'valid-token',
           'Content-Type': 'application/json',
         },
@@ -342,9 +341,9 @@ describe('VaultService', () => {
       const result = await vaultService.getManagerPublicKey('token');
 
       expect(httpService.axiosRef.get).toHaveBeenCalledWith(`${baseUrl}/v1/${transitPath}/keys/${managerId}`, {
-        headers: { 
+        headers: {
           'X-Vault-Token': 'token',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
       });
       expect(result.toString('base64')).toBe(fakePublicKeyBase64);

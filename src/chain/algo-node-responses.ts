@@ -26,17 +26,17 @@ interface TruncatedPostTransactionsResponse {
 interface AccountAssetsResponse {
   address: string;
   amount: bigint;
-  "amount-without-pending-rewards": bigint;
-  "apps-local-state": any[];
-  "apps-total-schema": {
-    "num-byte-slice": number;
-    "num-uint": number;
+  'amount-without-pending-rewards': bigint;
+  'apps-local-state': any[];
+  'apps-total-schema': {
+    'num-byte-slice': number;
+    'num-uint': number;
   };
   assets: AssetHolding[];
 }
 
 interface AssetHolding {
   amount: bigint;
-  "asset-id": number;
-  "is-frozen": boolean;
+  'asset-id': number;
+  'is-frozen': boolean;
 }

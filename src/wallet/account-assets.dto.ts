@@ -1,4 +1,4 @@
 export abstract class AccountAssetsDto {
-    address: string;
-    assets: AssetHolding[];
+  address: string;
+  assets: AssetHolding[];
 }

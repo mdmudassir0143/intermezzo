@@ -40,6 +40,6 @@ export class ManagerDetailDto {
     type: 'string',
     example: '1000000',
     description: 'The balance of Algorand held by the manager in microAlgos',
-  })  
+  })
   algoBalance?: string;
 }

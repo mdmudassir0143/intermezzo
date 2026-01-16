@@ -18,7 +18,7 @@ export class AuthService {
    */
   async signInWithRole(roleId: string, secretId: string): Promise<string> {
     const vault_token = await this.vaultService.getTokenWithRole(roleId, secretId);
-    return vault_token
+    return vault_token;
   }
 
   /**
@@ -37,7 +37,6 @@ export class AuthService {
 
   async authGithub(token: string): Promise<string> {
     const vault_token = await this.vaultService.authGithub(token);
-    return vault_token
+    return vault_token;
   }
-
 }

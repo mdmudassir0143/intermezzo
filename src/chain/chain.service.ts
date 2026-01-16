@@ -23,7 +23,7 @@ export class ChainService {
   }
 
   private parseLease(lease: string): Uint8Array {
-    return new Uint8Array(Buffer.from(lease, 'base64'))
+    return new Uint8Array(Buffer.from(lease, 'base64'));
   }
 
   addSignatureToTxn(encodedTransaction: Uint8Array, signature: Uint8Array): Uint8Array {
@@ -136,7 +136,7 @@ export class ChainService {
     if (note) {
       builder.addNote(note);
     }
-    
+
     if (amount != 0) {
       builder.addAssetAmount(amount);
     }

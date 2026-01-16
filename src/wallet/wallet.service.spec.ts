@@ -51,7 +51,7 @@ describe('WalletService', () => {
 
     vaultServiceMock.transitCreateKey.mockResolvedValueOnce(pubKey);
     chainServiceMock.getAccountBalance.mockResolvedValueOnce(0n);
-    
+
     const result = await walletService.userCreate(userId, 'vault_token');
 
     // expect(vaultServiceMock.getUserPublicKey).toHaveBeenCalledWith(userId, 'vault_token');
@@ -61,30 +61,34 @@ describe('WalletService', () => {
       user_id: userId,
       algoBalance: '0',
     });
-  })
+  });
 
   it('\(OK) getKeys()', async () => {
     const pubKey = randomBytes(32);
     const userId = '123581253191824129481240513501928401928';
 
     vaultServiceMock.getUserPublicKey.mockResolvedValueOnce(pubKey);
-    vaultServiceMock.getKeys.mockResolvedValueOnce([{
-      user_id: userId,
-      public_address: Buffer.from(pubKey).toString('base64'), // public_address here is actually publicKey from the vault
-    }]);
+    vaultServiceMock.getKeys.mockResolvedValueOnce([
+      {
+        user_id: userId,
+        public_address: Buffer.from(pubKey).toString('base64'), // public_address here is actually publicKey from the vault
+      },
+    ]);
 
     chainServiceMock.getAccountBalance.mockResolvedValueOnce(0n);
 
     const result = await walletService.getKeys('vault_token');
-    expect(result).toStrictEqual([{
-      public_address: new AlgorandEncoder().encodeAddress(pubKey),
-      user_id: userId
-    }]);
-  })
+    expect(result).toStrictEqual([
+      {
+        public_address: new AlgorandEncoder().encodeAddress(pubKey),
+        user_id: userId,
+      },
+    ]);
+  });
 
   it('getUserInfo() test', async () => {
-    const pubKey = randomBytes(32)
-    const algoBalanceMock = 10n
+    const pubKey = randomBytes(32);
+    const algoBalanceMock = 10n;
 
     chainServiceMock.getAccountBalance.mockResolvedValueOnce(algoBalanceMock);
     vaultServiceMock.getUserPublicKey.mockResolvedValueOnce(pubKey);
@@ -103,8 +107,8 @@ describe('WalletService', () => {
   });
 
   it('getManagerInfo() test', async () => {
-    const pubKey = randomBytes(32)
-    const algoBalanceMock = 10n
+    const pubKey = randomBytes(32);
+    const algoBalanceMock = 10n;
 
     chainServiceMock.getAccountBalance.mockResolvedValueOnce(algoBalanceMock);
     chainServiceMock.getAccountAssetHoldings.mockResolvedValueOnce([]);
@@ -115,16 +119,17 @@ describe('WalletService', () => {
 
     expect(vaultServiceMock.getManagerPublicKey).toHaveBeenCalledWith('vault_token');
 
-    expect(result).toStrictEqual(plainToClass(ManagerDetailDto, {
-      public_address: new AlgorandEncoder().encodeAddress(pubKey),
-      algoBalance: algoBalanceMock.toString(),
-      assets: [],
-    }))
+    expect(result).toStrictEqual(
+      plainToClass(ManagerDetailDto, {
+        public_address: new AlgorandEncoder().encodeAddress(pubKey),
+        algoBalance: algoBalanceMock.toString(),
+        assets: [],
+      }),
+    );
   });
 
-
   it('\(OK) createAsset()', async () => {
-    const pubKey = randomBytes(32)
+    const pubKey = randomBytes(32);
 
     const address = new AlgorandEncoder().encodeAddress(pubKey);
 
@@ -154,7 +159,7 @@ describe('WalletService', () => {
     chainServiceMock.submitTransaction.mockResolvedValueOnce({ txid: transactionId } as any);
 
     const result = await walletService.createAsset(createAssetDto, vaultToken);
-    
+
     expect(vaultServiceMock.getManagerPublicKey).toHaveBeenCalledWith(vaultToken);
     expect(chainServiceMock.craftAssetCreateTx).toHaveBeenCalledWith(address, createAssetDto);
     expect(vaultServiceMock.signAsManager).toHaveBeenCalledWith(tx, vaultToken);
@@ -164,14 +169,14 @@ describe('WalletService', () => {
   });
 
   describe('transferAsset()', () => {
-    const userPubKey = randomBytes(32)
-    const managerPubKey = randomBytes(32)
+    const userPubKey = randomBytes(32);
+    const managerPubKey = randomBytes(32);
 
     const assetId = 1n;
     const userId = 'user123';
     const amount = 10;
     const lease = randomBytes(32).toString('base64');
-    const note = "Note to self: notes are recorded for all";
+    const note = 'Note to self: notes are recorded for all';
     const vaultToken = 'vault_token';
     const userPublicAddress = new AlgorandEncoder().encodeAddress(userPubKey);
     const managerPublicAddress = new AlgorandEncoder().encodeAddress(managerPubKey);
@@ -335,7 +340,7 @@ describe('WalletService', () => {
         amount: 220000n,
         minBalance: 200000n,
       } as TruncatedAccountResponse);
-      const algoBalance = 2200000n
+      const algoBalance = 2200000n;
 
       // Mock the getAccountBalance to return a balance
       chainServiceMock.getAccountBalance.mockResolvedValueOnce(algoBalance);
@@ -377,8 +382,8 @@ describe('WalletService', () => {
         amount: 220000n,
         minBalance: 200000n,
       } as TruncatedAccountResponse);
-      
-      const algoBalance = 2200000n
+
+      const algoBalance = 2200000n;
 
       // Mock the getAccountBalance to return a balance
       chainServiceMock.getAccountBalance.mockResolvedValueOnce(algoBalance);
@@ -421,7 +426,7 @@ describe('WalletService', () => {
         minBalance: 100000n,
       } as TruncatedAccountResponse);
 
-      const algoBalance = 2200000n
+      const algoBalance = 2200000n;
 
       // Mock the getAccountBalance to return a balance
       chainServiceMock.getAccountBalance.mockResolvedValueOnce(algoBalance);
@@ -475,12 +480,10 @@ describe('WalletService', () => {
     const userId = 'user123';
     const amount = 10;
     const lease = randomBytes(32).toString('base64');
-    const note = "Note to self: notes are recorded for all";
+    const note = 'Note to self: notes are recorded for all';
     const vaultToken = 'vault_token';
     const userPublicAddress = new AlgorandEncoder().encodeAddress(userPubKey);
-    const managerPublicAddress = new AlgorandEncoder().encodeAddress(
-      managerPubKey,
-    );
+    const managerPublicAddress = new AlgorandEncoder().encodeAddress(managerPubKey);
     const suggestedParams = {
       minFee: 1000,
       lastRound: 1n,
@@ -490,9 +493,7 @@ describe('WalletService', () => {
     const dummySignedManagerTx2 = new Uint8Array([6]);
 
     beforeEach(async () => {
-      chainServiceMock.getSuggestedParams.mockResolvedValueOnce(
-        suggestedParams,
-      );
+      chainServiceMock.getSuggestedParams.mockResolvedValueOnce(suggestedParams);
       chainServiceMock.submitTransaction.mockResolvedValueOnce({
         txid: 'final_tx_id',
       } as any);
@@ -500,15 +501,9 @@ describe('WalletService', () => {
       vaultServiceMock.getManagerPublicKey.mockResolvedValueOnce(managerPubKey);
 
       // not mock tx creation, and set group id functions
-      chainServiceMock.craftAssetTransferTx.mockImplementation((...args) =>
-        chainService.craftAssetTransferTx(...args),
-      );
-      chainServiceMock.craftPaymentTx.mockImplementation((...args) =>
-        chainService.craftPaymentTx(...args),
-      );
-      chainServiceMock.setGroupID.mockImplementation((...args) =>
-        chainService.setGroupID(...args),
-      );
+      chainServiceMock.craftAssetTransferTx.mockImplementation((...args) => chainService.craftAssetTransferTx(...args));
+      chainServiceMock.craftPaymentTx.mockImplementation((...args) => chainService.craftPaymentTx(...args));
+      chainServiceMock.setGroupID.mockImplementation((...args) => chainService.setGroupID(...args));
 
       chainServiceMock.getAccountBalance.mockResolvedValueOnce(1000000n); // Mock default balance
 
@@ -517,32 +512,18 @@ describe('WalletService', () => {
         .fn()
         .mockResolvedValueOnce(dummySignedManagerTx1)
         .mockResolvedValueOnce(dummySignedManagerTx2);
-      walletService.signTxAsUser = jest
-        .fn()
-        .mockResolvedValueOnce(dummySignedUserTx);
+      walletService.signTxAsUser = jest.fn().mockResolvedValueOnce(dummySignedUserTx);
     });
     afterEach(() => {
       jest.clearAllMocks();
     });
     it('clawbackAsset() -- test clawback', async () => {
       // Call
-      const result = await walletService.clawbackAsset(
-        vaultToken,
-        assetId,
-        userId,
-        amount,
-        lease,
-        note,
-      );
+      const result = await walletService.clawbackAsset(vaultToken, assetId, userId, amount, lease, note);
 
       // Verify the flow.
-      expect(vaultServiceMock.getUserPublicKey).toHaveBeenCalledWith(
-        userId,
-        vaultToken,
-      );
-      expect(vaultServiceMock.getManagerPublicKey).toHaveBeenCalledWith(
-        vaultToken,
-      );
+      expect(vaultServiceMock.getUserPublicKey).toHaveBeenCalledWith(userId, vaultToken);
+      expect(vaultServiceMock.getManagerPublicKey).toHaveBeenCalledWith(vaultToken);
       expect(chainServiceMock.getSuggestedParams).toHaveBeenCalled();
 
       expect(chainServiceMock.craftAssetClawbackTx).toHaveBeenNthCalledWith(
@@ -559,9 +540,7 @@ describe('WalletService', () => {
 
       expect(walletService.signTxAsManager).toHaveBeenCalledTimes(1);
 
-      expect(chainServiceMock.submitTransaction).toHaveBeenCalledWith(
-        dummySignedManagerTx1,
-      );
+      expect(chainServiceMock.submitTransaction).toHaveBeenCalledWith(dummySignedManagerTx1);
 
       expect(result).toBe('final_tx_id');
     });
