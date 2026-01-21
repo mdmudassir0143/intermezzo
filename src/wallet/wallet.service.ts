@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { AlgorandEncoder } from '@algorandfoundation/algo-models';
 import { ManagerDetailDto } from './manager-detail.dto';
 import { plainToClass } from 'class-transformer';
+import { AppCallRequestDto } from './app-call-request.dto';
 @Injectable()
 export class WalletService {
   constructor(
@@ -366,5 +367,31 @@ export class WalletService {
     ).txid;
 
     return transactionId;
+  }
+
+  async createApp(vault_token: string, appCallRequestDto: AppCallRequestDto) {
+    
+    const managerPublicKey: Buffer = await this.vaultService.getManagerPublicKey(vault_token);
+    const managerPublicAddress: string = new AlgorandEncoder().encodeAddress(managerPublicKey);
+
+    const suggested_params = await this.chainService.getSuggestedParams();
+
+    const tx: Uint8Array<ArrayBufferLike> =
+      await this.chainService.craftAppCreateTx(
+        managerPublicAddress,
+        appCallRequestDto,
+        suggested_params,
+      );
+
+    const signedTx: Uint8Array<ArrayBufferLike> = await this.signTxAsManager(
+    tx,
+    vault_token,
+    );
+    const transactionId: string = (
+      await this.chainService.submitTransaction(signedTx)
+    ).txid;
+
+    return transactionId;
+
   }
 }

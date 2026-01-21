@@ -261,7 +261,13 @@ export class Wallet {
     @Body() appCallRequestDto: AppCallRequestDto,
   ): Promise<AppCallResponseDto> {
 
+    return {
+      transaction_id: await this.walletService.createApp(
+        request.vault_token,
+        appCallRequestDto,
+      ),
+    } as AppCallResponseDto;
     
-    throw new Error('createAppTx not implemented');
+    // throw new Error('createAppTx not implemented');
   }
 }
