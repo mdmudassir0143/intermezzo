@@ -240,14 +240,14 @@ export class Wallet {
   }
 
   // App Call
-  @Post('wallet/transactions/create-app/')
+  @Post('wallet/transactions/app-call/')
   @ApiOperation({
-    summary: 'Create App',
+    summary: 'App Call',
     description:
-      'Create an **Algorand** `App`.',
+      'Application call',
   })
   @ApiCreatedResponse({
-    description: 'The app has been successfully created.',
+    description: 'The app call has been successfully completed.',
     type: AppCallResponseDto,
   })
   @ApiNotFoundResponse({
@@ -256,13 +256,13 @@ export class Wallet {
   @ApiBadRequestResponse({
     description: 'Bad Request',
   })
-  async createAppTx(
+  async appCallTx(
     @Request() request: any,
     @Body() appCallRequestDto: AppCallRequestDto,
   ): Promise<AppCallResponseDto> {
 
     return {
-      transaction_id: await this.walletService.createApp(
+      transaction_id: await this.walletService.appCall(
         request.vault_token,
         appCallRequestDto,
       ),

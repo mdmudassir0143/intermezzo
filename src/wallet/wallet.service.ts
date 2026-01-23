@@ -369,7 +369,7 @@ export class WalletService {
     return transactionId;
   }
 
-  async createApp(vault_token: string, appCallRequestDto: AppCallRequestDto) {
+  async appCall(vault_token: string, appCallRequestDto: AppCallRequestDto) {
     
     const managerPublicKey: Buffer = await this.vaultService.getManagerPublicKey(vault_token);
     const managerPublicAddress: string = new AlgorandEncoder().encodeAddress(managerPublicKey);
@@ -377,7 +377,7 @@ export class WalletService {
     const suggested_params = await this.chainService.getSuggestedParams();
 
     const tx: Uint8Array<ArrayBufferLike> =
-      await this.chainService.craftAppCreateTx(
+      await this.chainService.craftAppCallTx(
         managerPublicAddress,
         appCallRequestDto,
         suggested_params,

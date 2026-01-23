@@ -201,7 +201,7 @@ export class ChainService {
   }
 
 
-  async craftAppCreateTx(
+  async craftAppCallTx(
     managerPublicAddress: string,
     appCallRequestDto: AppCallRequestDto,
     suggested_params: TruncatedSuggestedParamsResponse,
