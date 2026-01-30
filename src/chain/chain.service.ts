@@ -5,9 +5,11 @@ import {
   AlgorandTransactionCrafter,
   AssetParamsBuilder,
   AssetTransferTxBuilder,
-  ApplicationCallTxBuilder,
+  // ApplicationCallTxBuilder,
   StateSchema
 } from '@algorandfoundation/algo-models';
+
+import { ApplicationCallTxBuilder } from './algorand.transaction.appl.temp';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
@@ -205,8 +207,9 @@ export class ChainService {
     managerPublicAddress: string,
     appCallRequestDto: AppCallRequestDto,
     suggested_params: TruncatedSuggestedParamsResponse,
+    fee?:number
   ) {
-
+    
     const builder = new ApplicationCallTxBuilder(
       this.configService.get('GENESIS_ID'),
       this.configService.get('GENESIS_HASH'),
@@ -255,6 +258,20 @@ export class ChainService {
       builder.addLocalSchema(localStateSchema);
     }
 
+    if (appCallRequestDto.foreignAssets?.length) {
+      builder.addForeignAssets(appCallRequestDto.foreignAssets.map((a: any) => BigInt(a)));
+    }
+    if (appCallRequestDto.foreignApps?.length) {
+      builder.addForeignApps(appCallRequestDto.foreignApps.map((a: any) => BigInt(a)));
+    }
+    if(appCallRequestDto.foreignAccounts?.length) {
+      builder.addAccounts(appCallRequestDto.foreignAccounts);
+    }
+
+    if(appCallRequestDto.boxes?.length) {
+      builder.addBoxes(appCallRequestDto.boxes);
+    }
+
     if(appCallRequestDto.approvalProgram) builder.addApprovalProgram(base64ToBytes(appCallRequestDto.approvalProgram));
     if(appCallRequestDto.clearProgram) builder.addClearStateProgram(base64ToBytes(appCallRequestDto.clearProgram));
 
@@ -262,6 +279,7 @@ export class ChainService {
     
     const appArgs = await this.processAbiMethodArgs(appCallRequestDto.args);
     if (appArgs.length > 0) builder.addApplicationArgs(appArgs);
+    
     
     return builder.get().encode();
   }
@@ -301,7 +319,7 @@ export class ChainService {
 
       // For now we skip txn typed args here; they are expected to be
       // separate transactions in the group, not ABI-encoded scalars.
-      if (type === 'txn') {
+      if (type === 'pay' || type === 'keyreg' || type === 'axfer' || type === 'acfg' || type === 'appl') {
         return;
       }
 

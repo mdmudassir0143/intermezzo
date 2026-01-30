@@ -74,7 +74,7 @@ export class AppCallRequestDto {
     example: [1, 2],
     description: 'Lists the applications in addition to the application-id whose global states may be accessed by this application\'s approval-program and clear-state-program. The access is read-only.',
   })
-  foreignApps?: number[]
+  foreignApps?: bigint[]
 
   @IsOptional()
   @ApiProperty({
@@ -84,23 +84,19 @@ export class AppCallRequestDto {
             "name": "abi_method_name",
             "args": [
                 {
-                    "type": "txn",
-                    "name": "pay",
+                    "type": "pay | keyreg | axfer | acfg| appl",
                     "value": null
                 },
                 {
                     "type": "uint64",
-                    "name": "id",
                     "value": 12345
                 },
                 {
                     "type": "address",
-                    "name": "address",
                     "value": "V5LR6C5SVHBQY3SPTEPD5WEGNBBUDNEP2MSDIONQIODZXZHRMC6QF3CTZI"
                 },
                 {
                     "type": "string",
-                    "name": "arg_name",
                     "value": "abcd"
                 }
             ],
@@ -130,10 +126,10 @@ export class AppCallRequestDto {
   @IsArray()
   @IsOptional()
   @ApiProperty({
-    example: [1, 2],
+    example: [{ n: 'YWN0XwAAAAAAAATS' }],
     description: 'The boxes that should be made available for the runtime of the program.',
   })
-  boxes?: string[]
+  boxes?: Array<{ i: number; n: string }>
   
 
   @IsNumber()
@@ -144,6 +140,14 @@ export class AppCallRequestDto {
   })
   onComplete?: number
 
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    example: 1000,
+    description: 'The fee to be paid for the transaction. Fee should be in microAlgos.',
+  })
+  fee?: number
+
 
   @IsString()
     @ApiProperty({
@@ -151,6 +155,8 @@ export class AppCallRequestDto {
         description: 'The id of the User that is transferring Algos',
     })
   fromUserId: string;
+
+
 
   @IsString()
   @IsOptional()

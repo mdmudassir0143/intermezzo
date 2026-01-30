@@ -392,6 +392,7 @@ export class WalletService {
         fromAddress,
         appCallRequestDto,
         suggested_params,
+        appCallRequestDto.fee
       );
 
     try {
@@ -420,27 +421,37 @@ export class WalletService {
 
     Logger.debug(`Group Request DTO: ${groupRequestDto}`);
 
-    if (!Array.isArray(groupRequestDto.sequence) || groupRequestDto.sequence.length === 0) {
-      throw new Error('sequence is required and must be a non-empty array');
+    if (!Array.isArray((groupRequestDto as any).transactions) || groupRequestDto.transactions.length === 0) {
+      throw new Error('transactions is required and must be a non-empty array');
     }
-
-    const sequence = groupRequestDto.sequence;
 
     const unSignedTxs: Uint8Array[] = [];
     const addressToUserId: Record<string, string> = {};
 
-    for (const key of sequence) {
-      const value = (groupRequestDto as any)[key];
-      if (!value) {
-        throw new Error(`Missing transaction payload for sequence item: ${key}`);
+    for (const step of groupRequestDto.transactions) {
+      const key = (step as any).type as string;
+      const value = (step as any).payload;
+      if (!key || !value) {
+        throw new Error('Invalid transaction step');
       }
 
       switch (key) {
         case 'appCall': {
+          let fromAddress: string;
+          if (value.fromUserId === 'manager') {
+            fromAddress = managerPublicAddress;
+          } else {
+            fromAddress = (
+              await this.getUserInfo(value.fromUserId, vault_token)
+            ).public_address;
+            addressToUserId[fromAddress] = value.fromUserId;
+          }
+
           const tx = await this.chainService.craftAppCallTx(
-            managerPublicAddress,
+            fromAddress,
             value,
             suggested_params,
+            value.fee
           );
           unSignedTxs.push(tx);
           break;
@@ -507,7 +518,7 @@ export class WalletService {
           break;
         }
         default:
-          break;
+          throw new Error(`Unsupported transaction type: ${key}`);
       }
     }
 

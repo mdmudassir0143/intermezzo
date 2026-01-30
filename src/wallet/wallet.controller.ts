@@ -23,7 +23,6 @@ import { AlgoTransferResponseDto } from './algo-transfer-response.dto';
 import { AppCallRequestDto } from './app-call-request.dto';
 import { AppCallResponseDto } from './app-call-response.dto';
 import { GroupRequestDto } from './group-request.dto';
-import { GroupResponseDto } from './group-response.dto';
 
 @ApiBearerAuth()
 @Controller()
@@ -273,7 +272,7 @@ export class Wallet {
     // throw new Error('createAppTx not implemented');
   }
 
-  @Post('walet/transactions/group-transaction/')
+  @Post('wallet/transactions/group-transaction/')
    @ApiOperation({
     summary: 'Group Transaction',
     description:
@@ -298,6 +297,6 @@ export class Wallet {
         request.vault_token,
         groupRequestDto,
       ),
-    } as GroupResponseDto;
+    }
   }
 }

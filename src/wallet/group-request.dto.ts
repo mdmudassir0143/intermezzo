@@ -11,20 +11,20 @@ import { AssetClawbackRequestDto } from './asset-clawback-request.dto';
 export class GroupRequestDto {
 
     @IsArray()
-    @IsString({ each: true })
     @IsOptional()
     @ApiProperty({
-      required: false,
-      example: ['payment', 'appCall', 'assetTransfer'],
-      description:
-        'Optional explicit order of transactions to include in the atomic group. Values must match the request property names (e.g. appCall, assetConfig, assetTransfer, payment, assetClawback). If omitted, a default order is used.',
+      required: true,
+      example: [
+        { type: 'payment', payload: { toAddress: 'ADDR', amount: 1000, fromUserId: 'manager' } },
+        { type: 'appCall', payload: { appId: 123, onComplete: 0, fromUserId: 'manager' } },
+      ]
     })
-    sequence?: Array<'appCall' | 'assetConfig' | 'assetTransfer' | 'payment' | 'assetClawback'>;
-
-
-    appCall: AppCallRequestDto;
-    assetConfig: CreateAssetDto;
-    assetTransfer: AssetTransferRequestDto;
-    payment: AlgoTransferRequestDto;
-    assetClawback: AssetClawbackRequestDto;
+    transactions: Array<
+      | { type: 'payment'; payload: AlgoTransferRequestDto }
+      | { type: 'appCall'; payload: AppCallRequestDto }
+      | { type: 'assetConfig'; payload: CreateAssetDto }
+      | { type: 'assetTransfer'; payload: AssetTransferRequestDto }
+      | { type: 'assetClawback'; payload: AssetClawbackRequestDto }
+    >
+    
 }
