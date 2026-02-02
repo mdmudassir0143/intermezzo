@@ -1,5 +1,5 @@
-import { AlgorandEncoder } from "@algorandfoundation/algo-models";
-import { ITransactionHeaderBuilder, TransactionHeader } from "@algorandfoundation/algo-models";
+import { AlgorandEncoder } from '@algorandfoundation/algo-models';
+import { ITransactionHeaderBuilder, TransactionHeader } from '@algorandfoundation/algo-models';
 
 export type StateSchema = {
   nui: number;
@@ -7,26 +7,26 @@ export type StateSchema = {
 };
 
 export class ApplicationCallTransactionTemp extends TransactionHeader {
-  declare type: "appl";
+  declare type: 'appl';
 
-  apid!: bigint;              // Application ID
-  apan!: number;              // OnComplete
+  apid!: bigint; // Application ID
+  apan!: number; // OnComplete
 
-  apat?: Uint8Array[];        // Accounts
-  apaa?: Uint8Array[];        // App args
-  apap?: Uint8Array;          // Approval program
-  apsu?: Uint8Array;          // Clear program
+  apat?: Uint8Array[]; // Accounts
+  apaa?: Uint8Array[]; // App args
+  apap?: Uint8Array; // Approval program
+  apsu?: Uint8Array; // Clear program
 
-  apfa?: bigint[];            // ✅ Foreign APPS (FIXED)
-  apas?: bigint[];            // ✅ Foreign ASSETS (FIXED)
+  apfa?: bigint[]; // ✅ Foreign APPS (FIXED)
+  apas?: bigint[]; // ✅ Foreign ASSETS (FIXED)
 
   apgs?: StateSchema;
   apls?: StateSchema;
   apep?: number;
 
   apbx?: {
-    i: number;                // index into apfa
-    n: Uint8Array;            // ✅ RAW BYTES (FIXED)
+    i: number; // index into apfa
+    n: Uint8Array; // ✅ RAW BYTES (FIXED)
   }[];
 
   encode(): Uint8Array {
@@ -34,9 +34,7 @@ export class ApplicationCallTransactionTemp extends TransactionHeader {
   }
 }
 
-export interface IApplicationCallTxBuilder
-  extends ITransactionHeaderBuilder<IApplicationCallTxBuilder> {
-
+export interface IApplicationCallTxBuilder extends ITransactionHeaderBuilder<IApplicationCallTxBuilder> {
   addApplicationId(apid: bigint): IApplicationCallTxBuilder;
   addOnComplete(apan: number): IApplicationCallTxBuilder;
   addAccounts(apat: string[]): IApplicationCallTxBuilder;
@@ -62,9 +60,9 @@ export class ApplicationCallTxBuilder implements IApplicationCallTxBuilder {
 
   constructor(genesisId: string, genesisHash: string) {
     this.tx = new ApplicationCallTransactionTemp();
-    this.tx.type = "appl";
+    this.tx.type = 'appl';
     this.tx.gen = genesisId;
-    this.tx.gh = new Uint8Array(Buffer.from(genesisHash, "base64"));
+    this.tx.gh = new Uint8Array(Buffer.from(genesisHash, 'base64'));
     this.tx.fee = 1000n;
   }
 
@@ -79,7 +77,7 @@ export class ApplicationCallTxBuilder implements IApplicationCallTxBuilder {
   }
 
   addAccounts(accounts: string[]) {
-    this.tx.apat = accounts.map(a => this.encoder.decodeAddress(a));
+    this.tx.apat = accounts.map((a) => this.encoder.decodeAddress(a));
     return this;
   }
 
@@ -127,9 +125,9 @@ export class ApplicationCallTxBuilder implements IApplicationCallTxBuilder {
 
   // ✅ FIXED: decode base64 → raw bytes
   addBoxes(apbx: { i: number; n: string }[]) {
-    this.tx.apbx = apbx.map(b => ({
+    this.tx.apbx = apbx.map((b) => ({
       i: b.i, // i = index into apfa (0 is VALID)
-      n: new Uint8Array(Buffer.from(b.n, "base64"))
+      n: new Uint8Array(Buffer.from(b.n, 'base64')),
     }));
     return this;
   }
@@ -154,7 +152,7 @@ export class ApplicationCallTxBuilder implements IApplicationCallTxBuilder {
     return this;
   }
 
-  addNote(note: string, encoding: BufferEncoding = "utf8") {
+  addNote(note: string, encoding: BufferEncoding = 'utf8') {
     this.tx.note = new Uint8Array(Buffer.from(note, encoding));
     return this;
   }

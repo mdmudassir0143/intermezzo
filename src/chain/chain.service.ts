@@ -6,7 +6,7 @@ import {
   AssetParamsBuilder,
   AssetTransferTxBuilder,
   // ApplicationCallTxBuilder,
-  StateSchema
+  StateSchema,
 } from '@algorandfoundation/algo-models';
 
 import { ApplicationCallTxBuilder } from './algorand.transaction.appl.temp';
@@ -211,14 +211,12 @@ export class ChainService {
     return builder.get().encode();
   }
 
-
   async craftAppCallTx(
     managerPublicAddress: string,
     appCallRequestDto: AppCallRequestDto,
     suggested_params: TruncatedSuggestedParamsResponse,
-    fee?:number
+    fee?: number,
   ) {
-    
     const builder = new ApplicationCallTxBuilder(
       this.configService.get('GENESIS_ID'),
       this.configService.get('GENESIS_HASH'),
@@ -273,23 +271,22 @@ export class ChainService {
     if (appCallRequestDto.foreignApps?.length) {
       builder.addForeignApps(appCallRequestDto.foreignApps.map((a: any) => BigInt(a)));
     }
-    if(appCallRequestDto.foreignAccounts?.length) {
+    if (appCallRequestDto.foreignAccounts?.length) {
       builder.addAccounts(appCallRequestDto.foreignAccounts);
     }
 
-    if(appCallRequestDto.boxes?.length) {
+    if (appCallRequestDto.boxes?.length) {
       builder.addBoxes(appCallRequestDto.boxes);
     }
 
-    if(appCallRequestDto.approvalProgram) builder.addApprovalProgram(base64ToBytes(appCallRequestDto.approvalProgram));
-    if(appCallRequestDto.clearProgram) builder.addClearStateProgram(base64ToBytes(appCallRequestDto.clearProgram));
+    if (appCallRequestDto.approvalProgram) builder.addApprovalProgram(base64ToBytes(appCallRequestDto.approvalProgram));
+    if (appCallRequestDto.clearProgram) builder.addClearStateProgram(base64ToBytes(appCallRequestDto.clearProgram));
 
-    if(appCallRequestDto.appId) builder.addApplicationId(BigInt(appCallRequestDto.appId));
-    
+    if (appCallRequestDto.appId) builder.addApplicationId(BigInt(appCallRequestDto.appId));
+
     const appArgs = await this.processAbiMethodArgs(appCallRequestDto.args);
     if (appArgs.length > 0) builder.addApplicationArgs(appArgs);
-    
-    
+
     return builder.get().encode();
   }
 
@@ -299,9 +296,7 @@ export class ChainService {
    * It currently supports uint64, string, and address. Txn-typed args are ignored here
    * and must be represented as separate transactions in the group.
    */
-  async processAbiMethodArgs(
-    spec: AppCallRequestDto['args'],
-  ): Promise<Uint8Array[]> {
+  async processAbiMethodArgs(spec: AppCallRequestDto['args']): Promise<Uint8Array[]> {
     if (!spec) {
       return [];
     }
@@ -310,15 +305,11 @@ export class ChainService {
     const argSpecs = Array.isArray(spec.args) ? spec.args : [];
     const returnType = spec.returns?.type ?? 'void';
 
-    const argTypes: string[] = argSpecs
-      .map((s: any) => s.type)
-      .filter((t: any): t is string => typeof t === 'string');
+    const argTypes: string[] = argSpecs.map((s: any) => s.type).filter((t: any): t is string => typeof t === 'string');
 
     const signature = `${methodName}(${argTypes.join(',')})${returnType}`;
-    
-    const selector = new Uint8Array(
-      sha512_256.array(Buffer.from(signature)).slice(0, 4),
-    );
+
+    const selector = new Uint8Array(sha512_256.array(Buffer.from(signature)).slice(0, 4));
 
     const encodedArgs: Uint8Array[] = [];
 
@@ -337,7 +328,7 @@ export class ChainService {
       }
 
       const encoded = this.encodeAbiArgument(type, value);
-      
+
       if (encoded) {
         encodedArgs.push(encoded);
       }
@@ -544,6 +535,4 @@ export class ChainService {
     await this.waitConfirmation(postTransactionResponse.txid);
     return postTransactionResponse;
   }
-
 }
-

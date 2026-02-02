@@ -1,4 +1,4 @@
-import { AlgorandEncoder } from "@algorandfoundation/algo-models";
+import { AlgorandEncoder } from '@algorandfoundation/algo-models';
 
 export const LENGTH_ENCODE_BYTE_SIZE = 2;
 /**
@@ -38,9 +38,7 @@ export function bytesToBase64(byteArray: Uint8Array): string {
     return Buffer.from(byteArray).toString('base64');
   }
   /* eslint-env browser */
-  const binString = Array.from(byteArray, (x) => String.fromCodePoint(x)).join(
-    ''
-  );
+  const binString = Array.from(byteArray, (x) => String.fromCodePoint(x)).join('');
   return btoa(binString);
 }
 
@@ -89,25 +87,16 @@ export function encodeUint64(num: number | bigint) {
  *   be determined by the parameter decodingMode.
  */
 export function decodeUint64(data: Uint8Array, decodingMode: 'safe'): number;
-export function decodeUint64(
-  data: Uint8Array,
-  decodingMode: 'mixed'
-): number | bigint;
+export function decodeUint64(data: Uint8Array, decodingMode: 'mixed'): number | bigint;
 export function decodeUint64(data: Uint8Array, decodingMode: 'bigint'): bigint;
 export function decodeUint64(data: Uint8Array): number;
 export function decodeUint64(data: any, decodingMode: any = 'safe') {
-  if (
-    decodingMode !== 'safe' &&
-    decodingMode !== 'mixed' &&
-    decodingMode !== 'bigint'
-  ) {
+  if (decodingMode !== 'safe' && decodingMode !== 'mixed' && decodingMode !== 'bigint') {
     throw new Error(`Unknown decodingMode option: ${decodingMode}`);
   }
 
   if (data.byteLength === 0 || data.byteLength > 8) {
-    throw new Error(
-      `Data has unacceptable length. Expected length is between 1 and 8, got ${data.byteLength}`
-    );
+    throw new Error(`Data has unacceptable length. Expected length is between 1 and 8, got ${data.byteLength}`);
   }
 
   // insert 0s at the beginning if data is smaller than 8 bytes
@@ -121,7 +110,7 @@ export function decodeUint64(data: any, decodingMode: any = 'safe') {
   if (decodingMode === 'safe') {
     if (isBig) {
       throw new Error(
-        `Integer exceeds maximum safe integer: ${num.toString()}. Try decoding with "mixed" or "safe" decodingMode.`
+        `Integer exceeds maximum safe integer: ${num.toString()}. Try decoding with "mixed" or "safe" decodingMode.`,
       );
     }
     return Number(num);
@@ -134,54 +123,41 @@ export function decodeUint64(data: any, decodingMode: any = 'safe') {
   return num;
 }
 
-
-export function encodeString(value: boolean | number | bigint | string | Uint8Array ) {
-    if (typeof value !== 'string' && !(value instanceof Uint8Array)) {
-      throw new Error(`Cannot encode value as string: ${value}`);
-    }
-    let encodedBytes: Uint8Array;
-    if (typeof value === 'string') {
-      encodedBytes = new TextEncoder().encode(value);
-    } else {
-      encodedBytes = value;
-    }
-    const encodedLength = bigIntToBytes(
-      encodedBytes.length,
-      LENGTH_ENCODE_BYTE_SIZE
-    );
-    const mergedBytes = new Uint8Array(
-      encodedBytes.length + LENGTH_ENCODE_BYTE_SIZE
-    );
-    mergedBytes.set(encodedLength);
-    mergedBytes.set(encodedBytes, LENGTH_ENCODE_BYTE_SIZE);
-    return mergedBytes;
+export function encodeString(value: boolean | number | bigint | string | Uint8Array) {
+  if (typeof value !== 'string' && !(value instanceof Uint8Array)) {
+    throw new Error(`Cannot encode value as string: ${value}`);
   }
+  let encodedBytes: Uint8Array;
+  if (typeof value === 'string') {
+    encodedBytes = new TextEncoder().encode(value);
+  } else {
+    encodedBytes = value;
+  }
+  const encodedLength = bigIntToBytes(encodedBytes.length, LENGTH_ENCODE_BYTE_SIZE);
+  const mergedBytes = new Uint8Array(encodedBytes.length + LENGTH_ENCODE_BYTE_SIZE);
+  mergedBytes.set(encodedLength);
+  mergedBytes.set(encodedBytes, LENGTH_ENCODE_BYTE_SIZE);
+  return mergedBytes;
+}
 
 export function decodeString(byteString: Uint8Array): string {
-    if (byteString.length < LENGTH_ENCODE_BYTE_SIZE) {
-      throw new Error(
-        `byte string is too short to be decoded. Actual length is ${byteString.length}, but expected at least ${LENGTH_ENCODE_BYTE_SIZE}`
-      );
-    }
-    const view = new DataView(
-      byteString.buffer,
-      byteString.byteOffset,
-      LENGTH_ENCODE_BYTE_SIZE
+  if (byteString.length < LENGTH_ENCODE_BYTE_SIZE) {
+    throw new Error(
+      `byte string is too short to be decoded. Actual length is ${byteString.length}, but expected at least ${LENGTH_ENCODE_BYTE_SIZE}`,
     );
-    const byteLength = view.getUint16(0);
-    const byteValue = byteString.slice(
-      LENGTH_ENCODE_BYTE_SIZE,
-      byteString.length
-    );
-    if (byteLength !== byteValue.length) {
-      throw new Error(
-        `string length bytes do not match the actual length of string. Expected ${byteLength}, got ${byteValue.length}`
-      );
-    }
-    return new TextDecoder('utf-8').decode(byteValue);
   }
+  const view = new DataView(byteString.buffer, byteString.byteOffset, LENGTH_ENCODE_BYTE_SIZE);
+  const byteLength = view.getUint16(0);
+  const byteValue = byteString.slice(LENGTH_ENCODE_BYTE_SIZE, byteString.length);
+  if (byteLength !== byteValue.length) {
+    throw new Error(
+      `string length bytes do not match the actual length of string. Expected ${byteLength}, got ${byteValue.length}`,
+    );
+  }
+  return new TextDecoder('utf-8').decode(byteValue);
+}
 
-  /**
+/**
  * bigIntToBytes converts a BigInt to a big-endian Uint8Array for encoding.
  * @param bi - The bigint to convert.
  * @param size - The size of the resulting byte array.

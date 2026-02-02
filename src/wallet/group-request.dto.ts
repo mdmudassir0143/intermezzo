@@ -9,22 +9,20 @@ import { AlgoTransferRequestDto } from './algo-transfer-request.dto';
 import { AssetClawbackRequestDto } from './asset-clawback-request.dto';
 
 export class GroupRequestDto {
-
-    @IsArray()
-    @IsOptional()
-    @ApiProperty({
-      required: true,
-      example: [
-        { type: 'payment', payload: { toAddress: 'ADDR', amount: 1000, fromUserId: 'manager' } },
-        { type: 'appCall', payload: { appId: 123, onComplete: 0, fromUserId: 'manager' } },
-      ]
-    })
-    transactions: Array<
-      | { type: 'payment'; payload: AlgoTransferRequestDto }
-      | { type: 'appCall'; payload: AppCallRequestDto }
-      | { type: 'assetConfig'; payload: CreateAssetDto }
-      | { type: 'assetTransfer'; payload: AssetTransferRequestDto }
-      | { type: 'assetClawback'; payload: AssetClawbackRequestDto }
-    >
-    
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    required: true,
+    example: [
+      { type: 'payment', payload: { toAddress: 'ADDR', amount: 1000, fromUserId: 'manager' } },
+      { type: 'appCall', payload: { appId: 123, onComplete: 0, fromUserId: 'manager' } },
+    ],
+  })
+  transactions: Array<
+    | { type: 'payment'; payload: AlgoTransferRequestDto }
+    | { type: 'appCall'; payload: AppCallRequestDto }
+    | { type: 'assetConfig'; payload: CreateAssetDto }
+    | { type: 'assetTransfer'; payload: AssetTransferRequestDto }
+    | { type: 'assetClawback'; payload: AssetClawbackRequestDto }
+  >;
 }

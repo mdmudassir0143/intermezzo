@@ -239,8 +239,7 @@ export class Wallet {
   @Post('wallet/transactions/app-call/')
   @ApiOperation({
     summary: 'App Call',
-    description:
-      'Application call',
+    description: 'Application call',
   })
   @ApiCreatedResponse({
     description: 'The app call has been successfully completed.',
@@ -252,26 +251,18 @@ export class Wallet {
   @ApiBadRequestResponse({
     description: 'Bad Request',
   })
-  async appCallTx(
-    @Request() request: any,
-    @Body() appCallRequestDto: AppCallRequestDto,
-  ): Promise<AppCallResponseDto> {
-
+  async appCallTx(@Request() request: any, @Body() appCallRequestDto: AppCallRequestDto): Promise<AppCallResponseDto> {
     return {
-      transaction_id: await this.walletService.appCall(
-        request.vault_token,
-        appCallRequestDto,
-      ),
+      transaction_id: await this.walletService.appCall(request.vault_token, appCallRequestDto),
     } as AppCallResponseDto;
-    
+
     // throw new Error('createAppTx not implemented');
   }
 
   @Post('wallet/transactions/group-transaction/')
-   @ApiOperation({
+  @ApiOperation({
     summary: 'Group Transaction',
-    description:
-      'Group Transaction',
+    description: 'Group Transaction',
   })
   @ApiCreatedResponse({
     description: 'The group transaction has been successfully completed.',
@@ -282,16 +273,10 @@ export class Wallet {
   })
   @ApiBadRequestResponse({
     description: 'Bad Request',
-  }) 
-  async groupTx(
-    @Request() request: any,
-    @Body() groupRequestDto: GroupRequestDto,
-  ){
+  })
+  async groupTx(@Request() request: any, @Body() groupRequestDto: GroupRequestDto) {
     return {
-      group_id: await this.walletService.groupTransaction(
-        request.vault_token,
-        groupRequestDto,
-      ),
-    }
+      group_id: await this.walletService.groupTransaction(request.vault_token, groupRequestDto),
+    };
   }
 }

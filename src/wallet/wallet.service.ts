@@ -371,7 +371,7 @@ export class WalletService {
   }
 
   async appCall(vault_token: string, appCallRequestDto: AppCallRequestDto) {
-    let signedTx: Uint8Array
+    let signedTx: Uint8Array;
     let fromAddress: string;
 
     try {
@@ -380,23 +380,21 @@ export class WalletService {
         fromAddress = new AlgorandEncoder().encodeAddress(managerPublicKey);
       } else {
         fromAddress = (await this.getUserInfo(appCallRequestDto.fromUserId, vault_token)).public_address;
-      } 
+      }
     } catch (error) {
       throw new Error(`Failed to get from address for user ${appCallRequestDto.fromUserId}: ${error.message}`);
     }
 
     const suggested_params = await this.chainService.getSuggestedParams();
 
-    const appTx: Uint8Array<ArrayBufferLike> =
-      await this.chainService.craftAppCallTx(
-        fromAddress,
-        appCallRequestDto,
-        suggested_params,
-        appCallRequestDto.fee
-      );
+    const appTx: Uint8Array<ArrayBufferLike> = await this.chainService.craftAppCallTx(
+      fromAddress,
+      appCallRequestDto,
+      suggested_params,
+      appCallRequestDto.fee,
+    );
 
     try {
-
       if (appCallRequestDto.fromUserId === 'manager') {
         Logger.debug(`Signing transaction as manager: ${appTx.toString()}`);
         // sign as manager
@@ -407,7 +405,7 @@ export class WalletService {
       }
 
       // submit transaction
-      return (await this.chainService.submitTransaction(signedTx)).txid
+      return (await this.chainService.submitTransaction(signedTx)).txid;
     } catch (error) {
       throw new Error(`Failed to sign transaction as user ${appCallRequestDto.fromUserId}: ${error.message}`);
     }
@@ -441,33 +439,21 @@ export class WalletService {
           if (value.fromUserId === 'manager') {
             fromAddress = managerPublicAddress;
           } else {
-            fromAddress = (
-              await this.getUserInfo(value.fromUserId, vault_token)
-            ).public_address;
+            fromAddress = (await this.getUserInfo(value.fromUserId, vault_token)).public_address;
             addressToUserId[fromAddress] = value.fromUserId;
           }
 
-          const tx = await this.chainService.craftAppCallTx(
-            fromAddress,
-            value,
-            suggested_params,
-            value.fee
-          );
+          const tx = await this.chainService.craftAppCallTx(fromAddress, value, suggested_params, value.fee);
           unSignedTxs.push(tx);
           break;
         }
         case 'assetConfig': {
-          const tx = await this.chainService.craftAssetCreateTx(
-            managerPublicAddress,
-            value,
-          );
+          const tx = await this.chainService.craftAssetCreateTx(managerPublicAddress, value);
           unSignedTxs.push(tx);
           break;
         }
         case 'assetTransfer': {
-          const userPublicAddress: string = (
-            await this.getUserInfo(value.userId, vault_token)
-          ).public_address;
+          const userPublicAddress: string = (await this.getUserInfo(value.userId, vault_token)).public_address;
           const tx = await this.chainService.craftAssetTransferTx(
             managerPublicAddress,
             userPublicAddress,
@@ -485,9 +471,7 @@ export class WalletService {
           if (value.fromUserId === 'manager') {
             fromAddress = managerPublicAddress;
           } else {
-            fromAddress = (
-              await this.getUserInfo(value.fromUserId, vault_token)
-            ).public_address;
+            fromAddress = (await this.getUserInfo(value.fromUserId, vault_token)).public_address;
             addressToUserId[fromAddress] = value.fromUserId;
           }
 
@@ -501,9 +485,7 @@ export class WalletService {
           break;
         }
         case 'assetClawback': {
-          const userPublicAddress: string = (
-            await this.getUserInfo(value.userId, vault_token)
-          ).public_address;
+          const userPublicAddress: string = (await this.getUserInfo(value.userId, vault_token)).public_address;
           const tx = await this.chainService.craftAssetClawbackTx(
             managerPublicAddress,
             userPublicAddress,
@@ -547,4 +529,3 @@ export class WalletService {
     return txid;
   }
 }
-
