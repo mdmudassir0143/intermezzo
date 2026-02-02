@@ -14,6 +14,15 @@ import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { safeStringify } from '../util';
+import {
+  AccountAssetsResponse,
+  AssetHolding,
+  TruncatedAccountAssetResponse,
+  TruncatedAccountResponse,
+  TruncatedAssetHolding,
+  TruncatedPostTransactionsResponse,
+  TruncatedSuggestedParamsResponse,
+} from './algo-node-responses';
 import { AppCallRequestDto } from '../wallet/app-call-request.dto';
 import { base64ToBytes, bytesToBase64, encodeString, encodeUint64 } from './encoding';
 import { sha512_256 } from 'js-sha512';
@@ -30,11 +39,11 @@ export class ChainService {
   }
 
   private parseLease(lease: string): Uint8Array {
-    return new Uint8Array(Buffer.from(lease, 'base64'))
+    return new Uint8Array(Buffer.from(lease, 'base64'));
   }
 
   addSignatureToTxn(encodedTransaction: Uint8Array, signature: Uint8Array): Uint8Array {
-    let crafter = this.getCrafter();
+    const crafter = this.getCrafter();
     return crafter.addSignature(encodedTransaction, signature);
   }
 
@@ -47,11 +56,11 @@ export class ChainService {
    * @returns The list of transactions with the group ID set.
    */
   setGroupID(txns: Uint8Array[]): Uint8Array[] {
-    let groupId = new AlgorandEncoder().computeGroupId(txns);
+    const groupId = new AlgorandEncoder().computeGroupId(txns);
 
-    let grouped: Uint8Array[] = [];
-    for (let txn of txns) {
-      let decodedTx = new AlgorandEncoder().decodeTransaction(txn);
+    const grouped: Uint8Array[] = [];
+    for (const txn of txns) {
+      const decodedTx = new AlgorandEncoder().decodeTransaction(txn);
       decodedTx.grp = groupId;
       grouped.push(new AlgorandEncoder().encodeTransaction(decodedTx));
     }
@@ -74,10 +83,10 @@ export class ChainService {
       clawbackAddress?: string;
     },
   ): Promise<Uint8Array> {
-    let crafter = this.getCrafter();
-    let suggested_params: TruncatedSuggestedParamsResponse = await this.getSuggestedParams();
+    const crafter = this.getCrafter();
+    const suggested_params: TruncatedSuggestedParamsResponse = await this.getSuggestedParams();
 
-    let paramsBuilder = new AssetParamsBuilder();
+    const paramsBuilder = new AssetParamsBuilder();
     if (options.total) paramsBuilder.addTotal(options.total);
     if (options.decimals) paramsBuilder.addDecimals(Number(options.decimals));
     if (options.defaultFrozen) paramsBuilder.addDefaultFrozen(options.defaultFrozen);
@@ -88,10 +97,10 @@ export class ChainService {
     if (options.freezeAddress) paramsBuilder.addFreezeAddress(options.freezeAddress);
     if (options.clawbackAddress) paramsBuilder.addClawbackAddress(options.clawbackAddress);
 
-    let params = paramsBuilder.get();
+    const params = paramsBuilder.get();
     if (options.url) params.au = options.url;
 
-    let transactionBuilder = crafter
+    const transactionBuilder = crafter
       .createAsset(creatorAddress, params)
       .addFee(suggested_params.minFee)
       .addFirstValidRound(suggested_params.lastRound)
@@ -108,9 +117,9 @@ export class ChainService {
   ): Promise<Uint8Array> {
     suggested_params = suggested_params ? suggested_params : await this.getSuggestedParams();
 
-    let crafter = this.getCrafter();
+    const crafter = this.getCrafter();
 
-    let transactionBuilder = crafter
+    const transactionBuilder = crafter
       .pay(amount, from, to)
       .addFee(suggested_params.minFee)
       .addFirstValidRound(suggested_params.lastRound)
@@ -130,7 +139,7 @@ export class ChainService {
   ): Promise<Uint8Array> {
     suggested_params = suggested_params ? suggested_params : await this.getSuggestedParams();
 
-    let builder = new AssetTransferTxBuilder(
+    const builder = new AssetTransferTxBuilder(
       this.configService.get('GENESIS_ID'),
       this.configService.get('GENESIS_HASH'),
     );
@@ -143,7 +152,7 @@ export class ChainService {
     if (note) {
       builder.addNote(note);
     }
-    
+
     if (amount != 0) {
       builder.addAssetAmount(amount);
     }
@@ -526,8 +535,8 @@ export class ChainService {
    * @returns - The transaction ID of the submitted transaction.
    */
   async submitTransaction(txnOrtxns: Uint8Array | Uint8Array[]): Promise<TruncatedPostTransactionsResponse> {
-    let data = txnOrtxns instanceof Uint8Array ? Buffer.from(txnOrtxns) : Buffer.concat(txnOrtxns);
-    let response = await this.makeAlgoNodeRequest('v2/transactions', 'POST', data);
+    const data = txnOrtxns instanceof Uint8Array ? Buffer.from(txnOrtxns) : Buffer.concat(txnOrtxns);
+    const response = await this.makeAlgoNodeRequest('v2/transactions', 'POST', data);
     const postTransactionResponse: TruncatedPostTransactionsResponse = {
       txid: response['txId'],
     };
