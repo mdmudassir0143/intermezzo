@@ -73,7 +73,7 @@ export class AppCallRequestDto {
     description:
       "Lists the applications in addition to the application-id whose global states may be accessed by this application's approval-program and clear-state-program. The access is read-only.",
   })
-  foreignApps?: bigint[];
+  foreignApps?: number[];
 
   @IsOptional()
   @ApiProperty({
@@ -101,7 +101,7 @@ export class AppCallRequestDto {
       ],
       returns: {
         type: 'void',
-      },
+      }
     },
     description: 'The arguments to be passed to the app as a JSON object',
   })

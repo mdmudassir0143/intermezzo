@@ -5,15 +5,9 @@ export const LENGTH_ENCODE_BYTE_SIZE = 2;
  * Check whether the environment is Node.js (as opposed to the browser)
  * @returns True if Node.js environment, false otherwise
  */
-export function isNode() {
-  return (
-    // @ts-ignore
-    typeof process === 'object' &&
-    // @ts-ignore
-    typeof process.versions === 'object' &&
-    // @ts-ignore
-    typeof process.versions.node !== 'undefined'
-  );
+export function isNode(): boolean {
+  const proc = (globalThis as any).process;
+  return !!(proc && proc.versions && proc.versions.node);
 }
 
 /**

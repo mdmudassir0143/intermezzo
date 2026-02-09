@@ -24,6 +24,7 @@ import { AssetHolding } from 'src/chain/algo-node-responses';
 import { AppCallRequestDto } from './app-call-request.dto';
 import { AppCallResponseDto } from './app-call-response.dto';
 import { GroupRequestDto } from './group-request.dto';
+import { GroupResponseDto } from './group-response.dto';
 
 @ApiBearerAuth()
 @Controller()
@@ -255,8 +256,6 @@ export class Wallet {
     return {
       transaction_id: await this.walletService.appCall(request.vault_token, appCallRequestDto),
     } as AppCallResponseDto;
-
-    // throw new Error('createAppTx not implemented');
   }
 
   // Group Transaction
@@ -267,7 +266,7 @@ export class Wallet {
   })
   @ApiCreatedResponse({
     description: 'The group transaction has been successfully completed.',
-    type: GroupRequestDto,
+    type: GroupResponseDto,
   })
   @ApiNotFoundResponse({
     description: 'Not Found',

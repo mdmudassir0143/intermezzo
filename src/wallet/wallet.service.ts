@@ -426,7 +426,7 @@ export class WalletService {
    * @param vault_token The token used to authenticate with the vault.
    * @param groupRequestDto The request object containing the group transaction details.
    *
-   * @returns The transaction ID of the submitted transaction.
+   * @returns The group transaction ID (the txid of the first transaction in the submitted group).
    */
   async groupTransaction(vault_token: string, groupRequestDto: GroupRequestDto) {
     const managerPublicKey: Buffer = await this.vaultService.getManagerPublicKey(vault_token);
@@ -492,12 +492,8 @@ export class WalletService {
             addressToUserId[fromAddress] = value.fromUserId;
           }
 
-          const tx = await this.chainService.craftPaymentTx(
-            fromAddress,
-            value.toAddress,
-            value.amount,
-            suggested_params,
-          );
+          const tx = await this.chainService.craftPaymentTx(fromAddress, value.toAddress, value.amount, suggested_params);
+          
           unSignedTxs.push(tx);
           break;
         }

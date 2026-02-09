@@ -5,7 +5,6 @@ import {
   AlgorandTransactionCrafter,
   AssetParamsBuilder,
   AssetTransferTxBuilder,
-  // ApplicationCallTxBuilder,
   StateSchema,
 } from '@algorandfoundation/algo-models';
 
@@ -24,7 +23,7 @@ import {
   TruncatedSuggestedParamsResponse,
 } from './algo-node-responses';
 import { AppCallRequestDto } from '../wallet/app-call-request.dto';
-import { base64ToBytes, bytesToBase64, encodeString, encodeUint64 } from './encoding';
+import { base64ToBytes, encodeString, encodeUint64 } from './encoding';
 import { sha512_256 } from 'js-sha512';
 
 @Injectable()
