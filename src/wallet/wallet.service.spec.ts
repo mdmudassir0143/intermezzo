@@ -600,12 +600,7 @@ describe('WalletService', () => {
       const dto = { fromUserId: userId, appId: 123, onComplete: 0 } as any;
       const result = await walletService.appCall(vaultToken, dto);
 
-      expect(chainServiceMock.craftAppCallTx).toHaveBeenCalledWith(
-        userPublicAddress,
-        dto,
-        suggestedParams,
-        undefined,
-      );
+      expect(chainServiceMock.craftAppCallTx).toHaveBeenCalledWith(userPublicAddress, dto, suggestedParams, undefined);
       expect(walletService.signTxAsUser).toHaveBeenCalledWith(userId, dummyAppTx, vaultToken);
       expect(chainServiceMock.submitTransaction).toHaveBeenCalledWith(dummySignedTx);
       expect(result).toBe('appcall_tx_id');
@@ -617,12 +612,7 @@ describe('WalletService', () => {
       const dto = { fromUserId: 'manager', appId: 123, onComplete: 0, fee: 2000 } as any;
       await walletService.appCall(vaultToken, dto);
 
-      expect(chainServiceMock.craftAppCallTx).toHaveBeenCalledWith(
-        managerPublicAddress,
-        dto,
-        suggestedParams,
-        2000,
-      );
+      expect(chainServiceMock.craftAppCallTx).toHaveBeenCalledWith(managerPublicAddress, dto, suggestedParams, 2000);
     });
   });
 
@@ -632,7 +622,6 @@ describe('WalletService', () => {
     const managerPublicAddress = new AlgorandEncoder().encodeAddress(managerPubKey);
     const userPublicAddress = new AlgorandEncoder().encodeAddress(userPubKey);
     const vaultToken = 'vault_token';
-    const userId = 'user123';
     const suggestedParams = { minFee: 1000, lastRound: 1n } as TruncatedSuggestedParamsResponse;
     const dummyTx1 = new Uint8Array([1, 2, 3]);
     const dummyTx2 = new Uint8Array([4, 5, 6]);
@@ -654,9 +643,9 @@ describe('WalletService', () => {
     });
 
     it('groupTransaction() -- throws if transactions is empty', async () => {
-      await expect(
-        walletService.groupTransaction(vaultToken, { transactions: [] } as any),
-      ).rejects.toThrow('transactions is required and must be a non-empty array');
+      await expect(walletService.groupTransaction(vaultToken, { transactions: [] } as any)).rejects.toThrow(
+        'transactions is required and must be a non-empty array',
+      );
     });
 
     it('groupTransaction() -- throws on unsupported transaction type', async () => {
@@ -676,14 +665,8 @@ describe('WalletService', () => {
 
       // Mock decodeTransaction to return manager sender for both grouped txs
       const managerSndBytes = new AlgorandEncoder().decodeAddress(managerPublicAddress);
-      chainServiceMock.setGroupID.mockReturnValueOnce([dummyGroupedTx1, dummyGroupedTx2]);
-
-      // Spy on AlgorandEncoder.decodeTransaction via the real encoder used inside service
-      const realEncoder = new AlgorandEncoder();
       jest.spyOn(AlgorandEncoder.prototype, 'decodeTransaction').mockReturnValue({ snd: managerSndBytes } as any);
       jest.spyOn(AlgorandEncoder.prototype, 'encodeAddress').mockReturnValue(managerPublicAddress);
-
-      chainServiceMock.setGroupID.mockReturnValueOnce([dummyGroupedTx1, dummyGroupedTx2]);
 
       const groupRequestDto = {
         transactions: [
@@ -712,10 +695,9 @@ describe('WalletService', () => {
     });
 
     it('groupTransaction() -- throws if no transactions after processing', async () => {
-      // Simulate a case where steps produce no transactions by using an empty array directly
-      await expect(
-        walletService.groupTransaction(vaultToken, { transactions: [] } as any),
-      ).rejects.toThrow('transactions is required and must be a non-empty array');
+      await expect(walletService.groupTransaction(vaultToken, { transactions: [] } as any)).rejects.toThrow(
+        'transactions is required and must be a non-empty array',
+      );
     });
   });
 });

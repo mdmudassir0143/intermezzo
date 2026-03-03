@@ -492,8 +492,12 @@ export class WalletService {
             addressToUserId[fromAddress] = value.fromUserId;
           }
 
-          const tx = await this.chainService.craftPaymentTx(fromAddress, value.toAddress, value.amount, suggested_params);
-          
+          const tx = await this.chainService.craftPaymentTx(
+            fromAddress,
+            value.toAddress,
+            value.amount,
+            suggested_params,
+          );
           unSignedTxs.push(tx);
           break;
         }
@@ -522,7 +526,6 @@ export class WalletService {
     }
 
     const encoder = new AlgorandEncoder();
-    const groupIdBytes: Uint8Array = encoder.computeGroupId(unSignedTxs);
     const groupedTxns: Uint8Array[] = this.chainService.setGroupID(unSignedTxs);
 
     const signedTxs: Uint8Array[] = [];

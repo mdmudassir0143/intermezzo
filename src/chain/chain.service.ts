@@ -348,7 +348,6 @@ export class ChainService {
         // Expecting a base32 Algorand address string; need its 32-byte public key bytes
         const encoder = new AlgorandEncoder();
         // decodeAddress returns the raw public key bytes for an address string
-        // @ts-ignore decodeAddress may not be typed on older versions
         return encoder.decodeAddress(value);
       }
       default:

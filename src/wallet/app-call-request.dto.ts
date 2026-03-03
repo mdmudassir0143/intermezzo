@@ -101,7 +101,7 @@ export class AppCallRequestDto {
       ],
       returns: {
         type: 'void',
-      }
+      },
     },
     description: 'The arguments to be passed to the app as a JSON object',
   })
